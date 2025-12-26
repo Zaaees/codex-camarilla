@@ -163,7 +163,8 @@
             transform: rotateY(-180deg);
             pointer-events: none; 
             opacity: 0; 
-            transition: transform 1s, opacity 0.5s 0.3s;
+            /* Transition ajustée */
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1), opacity 0.5s 0.3s;
         }
 
         /* --- PAGES INTÉRIEURES --- */
@@ -181,7 +182,8 @@
             border-radius: 4px;
             opacity: 0;
             transform: scale(0.98);
-            transition: opacity 1s 0.5s, transform 1s 0.5s;
+            /* Délai de transition réduit pour apparaître plus tôt (0.3s au lieu de 0.5s) */
+            transition: opacity 1s 0.3s, transform 1s 0.3s;
         }
 
         .book-open .pages-container {
@@ -191,7 +193,7 @@
 
         .left-page, .right-page {
             flex: 1;
-            padding: 3.5rem 3rem; /* Marges confortables */
+            padding: 3rem; /* Marges confortables */
             position: relative;
             overflow-y: auto; /* Scroll actif si besoin */
             scrollbar-width: thin;
@@ -585,18 +587,15 @@
             },
             alchemy: {
                 title: "Alchimie",
-                quote: "Nous n'avons pas de dieux. Nous avons la chimie.",
-                intro: "Le sang des Sang-Clair est trop faible pour porter la malédiction, mais assez fort pour être un catalyseur. En utilisant leur corps comme fourneau (Athanor) ou des laboratoires, ils distillent des pouvoirs uniques à partir d'émotions volées.",
+                quote: "Cuisiner les Dieux dans une fiole.",
+                intro: "L'art bâtard des Sang-Clair. Ils utilisent leur corps ou des laboratoires pour distiller des pouvoirs contrefaits.<br><br><b>Méthodes de Distillation :</b><br>- <i>Athanor Corporis :</i> Distiller le sang dans son propre corps (Rapide mais dangereux).<br>- <i>Calcinatio :</i> Utiliser le corps d'un humain comme fourneau vivant.<br>- <i>Fixatio :</i> Distillation lente en laboratoire (Permet de stocker les potions).",
                 author: "Dr. Douglas Netchurch",
                 levels: [
-                    { t: "Méthodes", p: "<span class='alchemy-method'>Fixatio :</span> Distillation lente et stable en laboratoire.<br><span class='alchemy-method'>Athanor Corporis :</span> Utiliser son propre corps comme shaker (Rapide mais coûteux).<br><span class='alchemy-method'>Calcinatio :</span> Utiliser un humain comme fourneau vivant." },
-                    { t: "Niveau 1", p: "<b>Vision Lointaine (Far Reach) :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang mélancolique + Champignons hallucinogènes.</span><br>Permet de détacher son esprit pour espionner ou manipuler des objets à distance, comme un poltergeist." },
-                    { t: "Niveau 2", p: "<b>Brouillard (Haze) :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang flegmatique + Glace sèche + Cendres.</span><br>En expirant, l'alchimiste crée un nuage opaque, froid et lourd qui étouffe les sons et la vue." },
-                    { t: "Niveau 2", p: "<b>Enveloppe (Envelop) :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang sanguin + Peau morte + Argile.</span><br>Une pâte qui permet de copier l'apparence physique d'une cible comme un masque de chair parfait." },
-                    { t: "Niveau 3", p: "<b>Momentum Aérien :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang colérique + Hélium + Plume d'oiseau.</span><br>L'alchimiste s'allège drastiquement pour faire des bonds immenses, courir sur les murs ou planer." },
-                    { t: "Niveau 4", p: "<b>Éveil du Dormeur :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang colérique fort + Adrénaline + Caféine pure.</span><br>Une drogue violente capable de sortir un vampire de la torpeur instantanément... ou de tuer un mortel par arrêt cardiaque." },
-                    { t: "Niveau 5", p: "<b>Marche-Soleil :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang de l'Aube (Rare) + Or + Sang sanguin intense.</span><br>Le Saint Graal. Permet de résister à la lumière du soleil pour une courte durée, au prix d'une douleur constante." },
-                    { t: "Niveau 5", p: "<b>Profane Hieros Gamos :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang mélancolique + Mercure + Charbon.</span><br>Permet de remodeler son corps de façon permanente : changer de sexe, de visage, de voix ou d'empreintes digitales." }
+                    { t: "Niveau 1", p: "<b>Far Reach (Vision Lointaine) :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang mélancolique + Champignons hallucinogènes.</span><br>Permet de détacher son esprit pour espionner ou manipuler des objets à distance." },
+                    { t: "Niveau 2", p: "<b>Haze (Brouillard) :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang flegmatique + Glace sèche + Cendres.</span><br>Crée un nuage opaque et froid qui étouffe les sons et la vue." },
+                    { t: "Niveau 3", p: "<b>Airborne Momentum :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang colérique + Hélium + Plume d'oiseau.</span><br>S'alléger drastiquement pour faire des bonds immenses ou planer." },
+                    { t: "Niveau 4", p: "<b>Awaken the Sleeper :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang colérique fort + Adrénaline + Caféine pure.</span><br>Une drogue violente capable de sortir un vampire de la torpeur instantanément." },
+                    { t: "Niveau 5", p: "<b>Sun-Walking :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang de l'Aube (Rare) + Or + Sang sanguin intense.</span><br>Le Saint Graal. Permet de résister à la lumière du soleil pour une courte durée, au prix d'une douleur constante." }
                 ]
             }
         };
@@ -604,8 +603,12 @@
         // --- MOTEUR ---
 
         function openBook() {
-            document.getElementById('the-book').classList.add('book-open');
-            setTimeout(showIndex, 800);
+            // Créer le sommaire tout de suite
+            showIndex();
+            // Lancer l'animation
+            requestAnimationFrame(() => {
+                document.getElementById('the-book').classList.add('book-open');
+            });
         }
 
         function showIndex() {
@@ -617,7 +620,7 @@
 
             // Page Gauche : Titre et Dessin Occulte
             pageLeft.innerHTML = `
-                <div class="h-full flex flex-col justify-between items-center fade-in text-center p-4">
+                <div class="h-full flex flex-col justify-between items-center text-center p-4">
                     <div>
                         <h1 class="gothic-title">SOMMAIRE</h1>
                         <div class="w-16 h-1 bg-[#8b5e3c] mx-auto mb-4"></div>
@@ -627,7 +630,9 @@
                     <!-- SVG Gothique : Ankh + Ronces -->
                     <div class="flex-1 w-full flex items-center justify-center">
                         <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="occult-drawing">
+                            <!-- Ankh -->
                             <path d="M100 40 Q130 40, 130 70 Q130 100, 100 110 L100 180 M70 110 L130 110 M100 110 L100 40 Q70 40, 70 70 Q70 100, 100 110" stroke="#3e2723" stroke-width="3" fill="none"/>
+                            <!-- Ronces -->
                             <path d="M20 180 Q60 120, 100 150 T180 120" stroke="#2a0a0a" stroke-width="1" fill="none"/>
                             <path d="M180 180 Q140 120, 100 150 T20 120" stroke="#2a0a0a" stroke-width="1" fill="none"/>
                             <path d="M40 140 L30 130 M160 140 L170 130" stroke="#2a0a0a" stroke-width="1" />
@@ -640,7 +645,7 @@
 
             // Page Droite : Liste en grille pour éviter le scroll
             let indexHTML = `
-                <div class="index-wrapper fade-in">
+                <div class="index-wrapper">
                     <h2 class="sub-title">Disciplines Connues</h2>
                     <div class="index-grid">
             `;
