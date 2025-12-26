@@ -346,6 +346,215 @@
         .fade-in { animation: fadeIn 0.6s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ====================================
+           ADAPTATION MOBILE RESPONSIVE
+           ==================================== */
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 0;
+                overflow: auto;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            /* Livre adapté pour mobile */
+            .book-wrapper {
+                width: 95vw;
+                max-width: 450px;
+                height: auto;
+                min-height: 600px;
+                margin: 20px auto;
+            }
+
+            /* Couverture mobile */
+            .cover {
+                width: 100%;
+                height: 600px;
+                border-radius: 8px;
+            }
+
+            .cover-title {
+                font-size: 2.2rem;
+                letter-spacing: 1px;
+            }
+
+            .cover-subtitle {
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+            }
+
+            .ankh-symbol {
+                width: 80px;
+                height: 120px;
+                margin-bottom: 1rem;
+            }
+
+            .cover-border {
+                width: 85%;
+                height: 85%;
+                margin-left: 0;
+            }
+
+            /* Pages en mode single pour mobile */
+            .pages-container {
+                flex-direction: column;
+                height: auto;
+                min-height: 600px;
+            }
+
+            /* Cacher la reliure centrale sur mobile */
+            .spine-crease {
+                display: none;
+            }
+
+            /* Page unique sur mobile */
+            .left-page, .right-page {
+                flex: none;
+                width: 100%;
+                padding: 1.5rem;
+                min-height: 300px;
+            }
+
+            /* Cacher la page gauche sur mobile (mode single page) */
+            .left-page {
+                display: none;
+            }
+
+            .right-page {
+                display: block;
+            }
+
+            /* Titres adaptés mobile */
+            h1.gothic-title {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+
+            h2.sub-title {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+            }
+
+            p.body-text {
+                font-size: 0.95rem;
+                line-height: 1.4;
+                margin-bottom: 1rem;
+            }
+
+            .handwritten-note {
+                font-size: 1rem;
+                margin-top: 1rem;
+            }
+
+            /* Index adapté mobile */
+            .index-grid {
+                grid-template-columns: 1fr;
+                column-gap: 0;
+                row-gap: 0.3rem;
+            }
+
+            .index-item {
+                font-size: 1rem;
+                padding: 10px 12px;
+            }
+
+            /* Dessin occulte mobile */
+            .occult-drawing {
+                max-height: 200px;
+                width: 70%;
+                margin: 1rem auto;
+            }
+
+            /* Bouton retour mobile */
+            .text-return {
+                bottom: 15px;
+                right: 20px;
+                font-size: 1.2rem;
+            }
+
+            /* Ornements de coin plus petits */
+            .corner-ornament {
+                width: 40px;
+                height: 40px;
+            }
+
+            /* Reliure simplifiée sur mobile */
+            .cover-ridges {
+                width: 30px;
+            }
+
+            .cover::before {
+                width: 30px;
+            }
+
+            .ridge {
+                height: 8px;
+            }
+        }
+
+        /* Adaptation pour très petits écrans (< 400px) */
+        @media screen and (max-width: 400px) {
+            .book-wrapper {
+                width: 98vw;
+                min-height: 500px;
+            }
+
+            .cover {
+                height: 500px;
+            }
+
+            .cover-title {
+                font-size: 1.8rem;
+            }
+
+            .cover-subtitle {
+                font-size: 0.8rem;
+                letter-spacing: 1px;
+            }
+
+            .ankh-symbol {
+                width: 60px;
+                height: 90px;
+            }
+
+            h1.gothic-title {
+                font-size: 1.5rem;
+            }
+
+            h2.sub-title {
+                font-size: 1.1rem;
+            }
+
+            p.body-text {
+                font-size: 0.9rem;
+            }
+
+            .left-page, .right-page {
+                padding: 1rem;
+            }
+
+            .index-item {
+                font-size: 0.95rem;
+                padding: 8px 10px;
+            }
+        }
+
+        /* Mode paysage mobile */
+        @media screen and (max-width: 768px) and (orientation: landscape) {
+            .book-wrapper {
+                margin: 10px auto;
+            }
+
+            .cover {
+                height: 500px;
+            }
+
+            .pages-container {
+                min-height: 500px;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -618,45 +827,71 @@
 
             returnBtn.classList.add('hidden');
 
-            // Page Gauche : Titre et Dessin Occulte
-            pageLeft.innerHTML = `
-                <div class="h-full flex flex-col justify-between items-center text-center p-4">
-                    <div>
-                        <h1 class="gothic-title">SOMMAIRE</h1>
-                        <div class="w-16 h-1 bg-[#8b5e3c] mx-auto mb-4"></div>
-                        <p class="body-text text-sm italic">"La connaissance est la seule arme<br>que le temps n'émousse pas."</p>
-                    </div>
-                    
-                    <!-- SVG Gothique : Ankh + Ronces -->
-                    <div class="flex-1 w-full flex items-center justify-center">
-                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="occult-drawing">
-                            <!-- Ankh -->
-                            <path d="M100 40 Q130 40, 130 70 Q130 100, 100 110 L100 180 M70 110 L130 110 M100 110 L100 40 Q70 40, 70 70 Q70 100, 100 110" stroke="#3e2723" stroke-width="3" fill="none"/>
-                            <!-- Ronces -->
-                            <path d="M20 180 Q60 120, 100 150 T180 120" stroke="#2a0a0a" stroke-width="1" fill="none"/>
-                            <path d="M180 180 Q140 120, 100 150 T20 120" stroke="#2a0a0a" stroke-width="1" fill="none"/>
-                            <path d="M40 140 L30 130 M160 140 L170 130" stroke="#2a0a0a" stroke-width="1" />
-                        </svg>
-                    </div>
-                    
-                    <div class="text-xs font-serif opacity-50 mt-4">Volume I - Sang Maudit</div>
-                </div>
-            `;
+            const isMobile = window.innerWidth <= 768;
 
-            // Page Droite : Liste en grille pour éviter le scroll
-            let indexHTML = `
-                <div class="index-wrapper">
-                    <h2 class="sub-title">Disciplines Connues</h2>
-                    <div class="index-grid">
-            `;
-            
-            const keys = Object.keys(content);
-            keys.forEach(key => {
-                indexHTML += `<div class="index-item" onclick="goToDiscipline('${key}')"><span>${content[key].title}</span></div>`;
-            });
-            
-            indexHTML += `</div></div>`;
-            pageRight.innerHTML = indexHTML;
+            if (isMobile) {
+                // Sur mobile : tout dans la page droite
+                pageLeft.innerHTML = '';
+
+                let mobileIndexHTML = `
+                    <div class="h-full flex flex-col">
+                        <div class="text-center mb-6">
+                            <h1 class="gothic-title">SOMMAIRE</h1>
+                            <div class="w-16 h-1 bg-[#8b5e3c] mx-auto mb-3"></div>
+                            <p class="body-text text-sm italic">"La connaissance est la seule arme que le temps n'émousse pas."</p>
+                        </div>
+
+                        <h2 class="sub-title">Disciplines Connues</h2>
+                        <div class="index-grid flex-1">
+                `;
+
+                const keys = Object.keys(content);
+                keys.forEach(key => {
+                    mobileIndexHTML += `<div class="index-item" onclick="goToDiscipline('${key}')"><span>${content[key].title}</span></div>`;
+                });
+
+                mobileIndexHTML += `</div><div class="text-xs font-serif opacity-50 mt-4 text-center">Volume I - Sang Maudit</div></div>`;
+                pageRight.innerHTML = mobileIndexHTML;
+            } else {
+                // Version desktop originale
+                pageLeft.innerHTML = `
+                    <div class="h-full flex flex-col justify-between items-center text-center p-4">
+                        <div>
+                            <h1 class="gothic-title">SOMMAIRE</h1>
+                            <div class="w-16 h-1 bg-[#8b5e3c] mx-auto mb-4"></div>
+                            <p class="body-text text-sm italic">"La connaissance est la seule arme<br>que le temps n'émousse pas."</p>
+                        </div>
+
+                        <!-- SVG Gothique : Ankh + Ronces -->
+                        <div class="flex-1 w-full flex items-center justify-center">
+                            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="occult-drawing">
+                                <!-- Ankh -->
+                                <path d="M100 40 Q130 40, 130 70 Q130 100, 100 110 L100 180 M70 110 L130 110 M100 110 L100 40 Q70 40, 70 70 Q70 100, 100 110" stroke="#3e2723" stroke-width="3" fill="none"/>
+                                <!-- Ronces -->
+                                <path d="M20 180 Q60 120, 100 150 T180 120" stroke="#2a0a0a" stroke-width="1" fill="none"/>
+                                <path d="M180 180 Q140 120, 100 150 T20 120" stroke="#2a0a0a" stroke-width="1" fill="none"/>
+                                <path d="M40 140 L30 130 M160 140 L170 130" stroke="#2a0a0a" stroke-width="1" />
+                            </svg>
+                        </div>
+
+                        <div class="text-xs font-serif opacity-50 mt-4">Volume I - Sang Maudit</div>
+                    </div>
+                `;
+
+                let indexHTML = `
+                    <div class="index-wrapper">
+                        <h2 class="sub-title">Disciplines Connues</h2>
+                        <div class="index-grid">
+                `;
+
+                const keys = Object.keys(content);
+                keys.forEach(key => {
+                    indexHTML += `<div class="index-item" onclick="goToDiscipline('${key}')"><span>${content[key].title}</span></div>`;
+                });
+
+                indexHTML += `</div></div>`;
+                pageRight.innerHTML = indexHTML;
+            }
         }
 
         function goToDiscipline(key) {
@@ -667,42 +902,78 @@
 
             returnBtn.classList.remove('hidden');
 
+            const isMobile = window.innerWidth <= 768;
+
             // Reset pour animation
             pageLeft.innerHTML = "";
             pageRight.innerHTML = "";
 
             setTimeout(() => {
-                // PAGE GAUCHE : Lore (Centré verticalement)
-                pageLeft.innerHTML = `
-                    <div class="fade-in h-full flex flex-col justify-center">
-                        <h1 class="gothic-title">${data.title}</h1>
-                        <p class="text-center italic font-serif text-lg mb-8 text-[#800000]">"${data.quote}"</p>
-                        
-                        <div class="px-4">
-                            <p class="body-text first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 text-[#2b2520]">
-                                ${data.intro}
-                            </p>
-                        </div>
+                if (isMobile) {
+                    // Sur mobile : tout dans une seule page
+                    let mobileHTML = `
+                        <div class="fade-in h-full flex flex-col">
+                            <h1 class="gothic-title">${data.title}</h1>
+                            <p class="text-center italic font-serif text-base mb-4 text-[#800000]">"${data.quote}"</p>
 
-                        <div class="mt-8 pt-4 border-t border-[#8b5e3c] border-opacity-30">
-                            <p class="handwritten-note text-right">Archivé par : ${data.author}</p>
-                        </div>
-                    </div>
-                `;
+                            <div class="mb-4">
+                                <p class="body-text text-[#2b2520]">
+                                    ${data.intro}
+                                </p>
+                            </div>
 
-                // PAGE DROITE : Pouvoirs (Liste complète)
-                let powersHTML = `<div class="fade-in h-full flex flex-col"><h2 class="sub-title">Manifestations du Sang</h2><div class="flex-1 overflow-y-auto pr-2">`;
-                
-                data.levels.forEach(lvl => {
-                    powersHTML += `
-                        <div class="mb-4">
-                            <h3 class="font-bold text-[#550000] border-b border-[#8b5e3c] border-dashed mb-1 font-serif text-xs uppercase tracking-widest">${lvl.t}</h3>
-                            <p class="text-sm leading-snug text-[#1a1a1a] font-serif">${lvl.p}</p>
+                            <div class="mb-4 pb-3 border-b border-[#8b5e3c] border-opacity-30">
+                                <p class="handwritten-note text-right text-sm">Archivé par : ${data.author}</p>
+                            </div>
+
+                            <h2 class="sub-title">Manifestations du Sang</h2>
+                            <div class="flex-1 overflow-y-auto pr-2">
+                    `;
+
+                    data.levels.forEach(lvl => {
+                        mobileHTML += `
+                            <div class="mb-3">
+                                <h3 class="font-bold text-[#550000] border-b border-[#8b5e3c] border-dashed mb-1 font-serif text-xs uppercase tracking-widest">${lvl.t}</h3>
+                                <p class="text-sm leading-snug text-[#1a1a1a] font-serif">${lvl.p}</p>
+                            </div>
+                        `;
+                    });
+
+                    mobileHTML += `</div></div>`;
+                    pageRight.innerHTML = mobileHTML;
+
+                } else {
+                    // Version desktop originale : deux pages
+                    pageLeft.innerHTML = `
+                        <div class="fade-in h-full flex flex-col justify-center">
+                            <h1 class="gothic-title">${data.title}</h1>
+                            <p class="text-center italic font-serif text-lg mb-8 text-[#800000]">"${data.quote}"</p>
+
+                            <div class="px-4">
+                                <p class="body-text first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 text-[#2b2520]">
+                                    ${data.intro}
+                                </p>
+                            </div>
+
+                            <div class="mt-8 pt-4 border-t border-[#8b5e3c] border-opacity-30">
+                                <p class="handwritten-note text-right">Archivé par : ${data.author}</p>
+                            </div>
                         </div>
                     `;
-                });
-                powersHTML += `</div></div>`;
-                pageRight.innerHTML = powersHTML;
+
+                    let powersHTML = `<div class="fade-in h-full flex flex-col"><h2 class="sub-title">Manifestations du Sang</h2><div class="flex-1 overflow-y-auto pr-2">`;
+
+                    data.levels.forEach(lvl => {
+                        powersHTML += `
+                            <div class="mb-4">
+                                <h3 class="font-bold text-[#550000] border-b border-[#8b5e3c] border-dashed mb-1 font-serif text-xs uppercase tracking-widest">${lvl.t}</h3>
+                                <p class="text-sm leading-snug text-[#1a1a1a] font-serif">${lvl.p}</p>
+                            </div>
+                        `;
+                    });
+                    powersHTML += `</div></div>`;
+                    pageRight.innerHTML = powersHTML;
+                }
             }, 50);
         }
     </script>
