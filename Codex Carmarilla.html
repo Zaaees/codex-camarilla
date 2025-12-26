@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Codex Camarilla - Livre de Sang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Polices : Titres Gothiques, Texte Imprimerie Ancienne, Manuscrit lisible */
+        @import url('https://fonts.googleapis.com/css2?family=Uncial+Antiqua&family=IM+Fell+English:ital@0;1&family=Cinzel+Decorative:wght@700&family=Meddon&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+        :root {
+            --cover-color: #2a0303; /* Rouge Sang Séché Profond */
+            --gold-color: #d4af37;
+            --gold-gradient: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+            --page-bg: #e3d0b9;
+        }
+
+        body {
+            background-color: #050505;
+            background-image: radial-gradient(circle at center, #1a0a0a 0%, #000000 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1500px; /* Pour la 3D */
+            font-family: 'IM Fell English', serif;
+        }
+
+        /* --- STRUCTURE DU LIVRE --- */
+        .book-wrapper {
+            position: relative;
+            width: 1000px;  /* Largeur confortable */
+            height: 700px; /* Hauteur confortable */
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
+
+        /* --- COUVERTURE (Fermée) --- */
+        .cover {
+            position: absolute;
+            width: 500px; /* Moitié de la largeur totale */
+            height: 700px;
+            background-color: var(--cover-color);
+            /* Texture de cuir riche */
+            background-image: url("https://www.transparenttextures.com/patterns/dark-leather.png");
+            border-radius: 4px 12px 12px 4px;
+            box-shadow: 
+                inset 15px 0 20px rgba(0,0,0,0.6), /* Ombre reliure */
+                inset -3px 0 5px rgba(255,255,255,0.1), /* Reflet bord */
+                20px 20px 50px rgba(0,0,0,0.9); /* Ombre portée */
+            z-index: 100;
+            transform-origin: left center;
+            transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid #1a0101;
+            overflow: hidden;
+        }
+
+        /* Nervures du dos (Spine Ridges) */
+        .cover::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 50px;
+            background: linear-gradient(to right, rgba(0,0,0,0.6), transparent 30%, rgba(0,0,0,0.2));
+            z-index: 1;
+            border-right: 1px solid rgba(0,0,0,0.5);
+        }
+
+        .cover-ridges {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            z-index: 2;
+        }
+        
+        .ridge {
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent 50%, rgba(0,0,0,0.5));
+            box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* Décorations de couverture */
+        .cover-border {
+            width: 80%;
+            height: 90%;
+            border: 4px double #8a6a35;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            margin-left: 20px; /* Décalage pour la reliure */
+        }
+        
+        .corner-ornament {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2,2 L20,2 L20,6 L6,6 L6,20 L2,20 Z' fill='%23c5a059'/%3E%3Cpath d='M10,10 L30,10 L30,12 L12,12 L12,30 L10,30 Z' fill='%238a6a35'/%3E%3C/svg%3E");
+            opacity: 0.8;
+        }
+        .tr { transform: rotate(90deg); top: 5px; right: 5px; }
+        .br { transform: rotate(180deg); bottom: 5px; right: 5px; }
+        .bl { transform: rotate(270deg); bottom: 5px; left: 5px; }
+        .tl { top: 5px; left: 5px; }
+
+        .cover-title {
+            font-family: 'Cinzel Decorative', serif;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 3.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            line-height: 1;
+            filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.8));
+        }
+
+        .cover-subtitle {
+            font-family: 'Uncial Antiqua', serif;
+            color: #c5a059;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 1rem;
+            opacity: 0.8;
+        }
+
+        /* Symbole central de couverture (Ankh Vectoriel) */
+        .ankh-symbol {
+            width: 120px;
+            height: 180px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(3px 3px 5px rgba(0,0,0,0.8));
+        }
+        .ankh-path {
+            fill: url(#goldGradient);
+            stroke: #3e2723;
+            stroke-width: 1;
+        }
+
+        /* Effet d'ouverture */
+        .book-open .cover {
+            transform: rotateY(-180deg);
+            pointer-events: none; 
+            opacity: 0; 
+            transition: transform 1s, opacity 0.5s 0.3s;
+        }
+
+        /* --- PAGES INTÉRIEURES --- */
+        .pages-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            z-index: 10;
+            background-color: var(--page-bg);
+            background-image: url("https://www.transparenttextures.com/patterns/aged-paper.png");
+            box-shadow: 
+                inset 0 0 80px rgba(0,0,0,0.6), 
+                0 5px 20px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            opacity: 0;
+            transform: scale(0.98);
+            transition: opacity 1s 0.5s, transform 1s 0.5s;
+        }
+
+        .book-open .pages-container {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .left-page, .right-page {
+            flex: 1;
+            padding: 3.5rem 3rem; /* Marges confortables */
+            position: relative;
+            overflow-y: auto; /* Scroll actif si besoin */
+            scrollbar-width: thin;
+            scrollbar-color: #8b5e3c transparent;
+        }
+        
+        /* Reliure centrale visuelle */
+        .spine-crease {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 40px;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, 
+                rgba(40, 20, 10, 0.2) 0%, 
+                rgba(30, 10, 5, 0.5) 50%, 
+                rgba(40, 20, 10, 0.2) 100%);
+            z-index: 20;
+            pointer-events: none;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        /* --- CONTENU --- */
+        h1.gothic-title {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 2.8rem;
+            color: #2a0202;
+            text-align: center;
+            border-bottom: 2px solid #550000;
+            padding-bottom: 5px;
+            margin-bottom: 1.5rem;
+            line-height: 1;
+        }
+
+        h2.sub-title {
+            font-family: 'Uncial Antiqua', serif;
+            font-size: 1.6rem;
+            color: #550000;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(85, 0, 0, 0.2);
+        }
+
+        p.body-text {
+            font-size: 1.15rem;
+            line-height: 1.5;
+            text-align: justify;
+            margin-bottom: 1.2rem;
+        }
+
+        .handwritten-note {
+            font-family: 'Meddon', cursive;
+            color: #002244;
+            font-size: 1.2rem;
+            transform: rotate(-2deg);
+            margin-top: 2rem;
+            opacity: 0.8;
+            text-align: right;
+        }
+
+        /* --- INDEX (SOMMAIRE) OPTIMISÉ --- */
+        .index-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .index-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            column-gap: 2rem;
+            row-gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .index-item {
+            cursor: pointer;
+            padding: 8px 10px;
+            border-bottom: 1px dashed #8b5e3c;
+            transition: all 0.2s;
+            font-family: 'Uncial Antiqua', serif;
+            font-size: 1.1rem;
+            color: #2b2520;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .index-item:hover {
+            color: #800000;
+            background-color: rgba(128, 0, 0, 0.05);
+            padding-left: 15px;
+        }
+        .index-item span { pointer-events: none; }
+        
+        /* --- DESSIN OCCULTE --- */
+        .occult-drawing {
+            width: 80%; /* Centré et plus petit */
+            height: auto;
+            max-height: 300px;
+            margin: 2rem auto;
+            opacity: 0.85;
+            filter: sepia(0.5) contrast(1.2);
+            display: block;
+        }
+
+        /* --- BOUTON RETOUR TEXTE --- */
+        .text-return {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            cursor: pointer;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.5rem;
+            color: #800000;
+            font-weight: bold;
+            opacity: 0.7;
+            transition: all 0.3s;
+            border-bottom: 1px solid transparent;
+        }
+        .text-return:hover {
+            opacity: 1;
+            transform: scale(1.05);
+            border-bottom: 1px solid #800000;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+        
+        .hidden { display: none; }
+        
+        /* --- STYLE ALCHIMIE SPÉCIFIQUE --- */
+        .alchemy-method {
+            font-family: 'Uncial Antiqua', serif;
+            color: #550000;
+            font-size: 1.1rem;
+            margin-bottom: 0.2rem;
+        }
+        .alchemy-ingredients {
+            font-family: 'Meddon', cursive;
+            color: #4a4a4a;
+            font-size: 0.95rem;
+            display: block;
+            margin-bottom: 0.5rem;
+            border-left: 2px solid rgba(0,0,0,0.2);
+            padding-left: 10px;
+        }
+
+        /* Animation */
+        .fade-in { animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <!-- Structure 3D globale -->
+    <div class="book-wrapper" id="the-book">
+        
+        <!-- Couverture -->
+        <div class="cover" onclick="openBook()">
+            <div class="cover-ridges">
+                <div class="ridge"></div><div class="ridge"></div><div class="ridge"></div><div class="ridge"></div><div class="ridge"></div>
+            </div>
+            
+            <div class="cover-border">
+                <div class="corner-ornament tl"></div>
+                <div class="corner-ornament tr"></div>
+                
+                <!-- Ankh Doré Vectoriel -->
+                <svg class="ankh-symbol" viewBox="0 0 100 200">
+                    <defs>
+                        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#c5a059;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#8a6a35;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Boucle -->
+                    <path d="M50 20 Q80 20, 80 50 Q80 80, 50 90 Q20 80, 20 50 Q20 20, 50 20 Z M50 35 Q35 35, 35 50 Q35 65, 50 65 Q65 65, 65 50 Q65 35, 50 35 Z" class="ankh-path" />
+                    <!-- Bras -->
+                    <rect x="10" y="90" width="80" height="20" class="ankh-path" />
+                    <!-- Pied -->
+                    <rect x="40" y="110" width="20" height="80" class="ankh-path" />
+                </svg>
+                
+                <h1 class="cover-title">CODEX<br>SANGUINIS</h1>
+                <div class="w-24 h-1 bg-yellow-600 mb-6 shadow-md"></div>
+                <h2 class="cover-subtitle">Camarilla Archives</h2>
+                
+                <div class="corner-ornament bl"></div>
+                <div class="corner-ornament br"></div>
+            </div>
+        </div>
+
+        <!-- Pages Intérieures -->
+        <div class="pages-container">
+            <div class="spine-crease"></div>
+
+            <!-- Page Gauche -->
+            <div class="left-page flex flex-col justify-center" id="page-left"></div>
+
+            <!-- Page Droite -->
+            <div class="right-page flex flex-col justify-center" id="page-right"></div>
+
+            <!-- Bouton Retour Index TEXTE -->
+            <div id="return-btn" class="text-return hidden" onclick="showIndex()" title="Retour au Sommaire">INDEX</div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- DATA COMPLÈTE IMMERSIVE V5 ---
+        const content = {
+            dominate: {
+                title: "Dominate",
+                quote: "L'esprit est une porte. J'ai la clé.",
+                intro: "La Domination n'est pas de la magie, c'est l'imposition de la volonté pure du sang royal sur la plèbe. Elle exige un contact visuel ininterrompu et une voix impérieuse. Nous ne demandons pas, nous décrétons.",
+                author: "Lucinde, Justicar Ventrue",
+                levels: [
+                    { t: "Ordre Compulsif (1)", p: "Un seul mot, prononcé avec l'autorité d'un dieu. 'Silence'. 'Genoux'. La volonté de la victime s'effondre avant même qu'elle ne comprenne. Elle obéit, son corps trahissant son esprit." },
+                    { t: "Brouillard de Mémoire (1)", p: "Une miséricorde nécessaire. Je lisse les rides du temps dans leur esprit, effaçant les dernières minutes traumatisantes pour ne laisser qu'une brume confuse. Ils ne se souviennent pas de nos visages." },
+                    { t: "Mesmérisme (2)", p: "Je plante une graine dans leurs pensées. Une instruction complexe, dormante ou active, qu'ils suivront avec la dévotion d'un automate, persuadés que leur destin est de me servir." },
+                    { t: "Démence (2)", p: "<i>(Variante Malkavienne)</i> Au lieu de l'ordre, le chaos. Je brise le miroir de leur raison. Ils ne m'obéissent pas, ils hurlent face aux démons que je réveille dans leur propre crâne." },
+                    { t: "L'Esprit Oublieux (3)", p: "Je suis le chirurgien de l'âme. Je peux extraire des heures entières de souvenirs, les remodeler, transformer une scène de carnage en un dîner romantique. Leur passé m'appartient." },
+                    { t: "Directive Submergée (3)", p: "Une bombe à retardement psychique. L'ordre est enfoui si profondément qu'ils l'oublient, jusqu'à ce qu'un mot-clé ou un événement le déclenche des semaines plus tard." },
+                    { t: "Rationalisation (4)", p: "Le mensonge parfait. La victime exécute mes ordres les plus abjects et invente elle-même les justifications pour expliquer pourquoi elle *voulait* le faire." },
+                    { t: "Manipulation de Masse (5)", p: "Pourquoi se limiter à un esprit ? Je deviens le chef d'orchestre d'une foule entière. D'un regard, l'émeute s'apaise ou se déchaîne." },
+                    { t: "Décret Terminal (5)", p: "Je brise l'instinct de survie, la loi la plus fondamentale du vivant. Je peux ordonner à un cœur de cesser de battre, à un homme de cesser de respirer." }
+                ]
+            },
+            auspex: {
+                title: "Auspex",
+                quote: "Tu crois mentir, mais ton sang hurle la vérité.",
+                intro: "L'Auspex n'est pas seulement une 'super-vision'. C'est l'ouverture du troisième œil. Le monde devient une cacophonie d'informations sensorielles et spirituelles. Rien ne peut rester caché.",
+                author: "Anatole, Prophète Malkavien",
+                levels: [
+                    { t: "Sens Accrus (1)", p: "Le monde explose. J'entends le frottement des muscles sous la peau, je vois la chaleur des pas récents. Je suis le prédateur parfait, mais le fracas d'un coup de feu peut m'aveugler." },
+                    { t: "Perception de l'Aura (1)", p: "Les mots sont inutiles. Je vois l'âme qui pulse autour de vous. Le vert du mensonge, le rouge de la rage, le noir de la diablerie. Votre nature est nue devant moi." },
+                    { t: "Prémonition (2)", p: "Le temps n'est pas une ligne droite. J'ai des flashs, des visions de ce qui pourrait être. Je sens le coup partir avant que la gâchette ne soit pressée." },
+                    { t: "Obeah (2)", p: "<i>(Variante Salubri)</i> Je vois les blessures de l'âme et je peux les apaiser, calmant la bête ou restaurant la volonté brisée d'un autre." },
+                    { t: "Lecture de l'Âme (3)", p: "Je ne regarde plus seulement l'aura, je la dissèque. Je connais vos peurs, vos désirs, votre nature profonde en un instant de concentration." },
+                    { t: "Partage des Sens (3)", p: "Je ferme mes yeux pour ouvrir les vôtres. Je vois ce que vous voyez, j'entends ce que vous entendez. Je suis le passager silencieux de votre perception." },
+                    { t: "Toucher de l'Esprit (4)", p: "Les objets ont une mémoire. En touchant cette arme, je ressens la haine de celui qui l'a tenue, je vois sa dernière victime. Le passé tache la matière." },
+                    { t: "Télépathie (5)", p: "Je n'ai pas besoin que vous parliez. J'arrache les pensées directement de votre cortex, ou j'y projette ma voix comme un dieu intérieur." },
+                    { t: "Projection Psychique (5)", p: "Je laisse ma chair inerte derrière moi. Je deviens pur esprit, voyageant à la vitesse de la pensée, invisible et intouchable, explorant le monde astral." }
+                ]
+            },
+            celerity: {
+                title: "Célérité",
+                quote: "Le monde est une statue. Je suis le seul mouvement.",
+                intro: "La Célérité transcende la simple vitesse physique. C'est une altération locale du temps. Pour moi, une seconde est une minute. Je danse entre les gouttes de pluie, je suis l'éclair qui frappe avant le tonnerre.",
+                author: "Juge Fatima, Banu Haqim",
+                levels: [
+                    { t: "Grâce Féline (1)", p: "La gravité me respecte. Je peux tenir en équilibre sur un fil de rasoir, atterrir sans un bruit après une chute vertigineuse. Mon corps compense instantanément tout déséquilibre." },
+                    { t: "Réflexes Éclairs (1)", p: "Tout ralentit. Je vois le percuteur de l'arme frapper l'amorce. J'ai une éternité pour esquiver la balle qui sort du canon." },
+                    { t: "Fulgurance (2)", p: "Je deviens flou. Je traverse le champ de bataille avant que l'ennemi n'ait levé son arme. Je suis partout à la fois." },
+                    { t: "Clignement (3)", p: "Je ne cours pas, je disparais. D'un point A à un point B en ligne droite, instantanément. L'œil humain ne voit que le vide que je laisse derrière moi." },
+                    { t: "Traversée (3)", p: "Tant que je cours, la physique ne s'applique plus. Je monte à la verticale sur les gratte-ciels, je cours sur la surface de l'eau sans la briser." },
+                    { t: "Élégance du Sang (4)", p: "Je partage ma vitesse. Une goutte de mon sang sur vos lèvres, et vous aussi, vous verrez le monde s'arrêter." },
+                    { t: "Frappe Éclair (5)", p: "Je frappe plus vite que la pensée. Aucune parade n'est possible, aucune esquive. Le coup arrive avant l'intention." },
+                    { t: "Fraction de Seconde (5)", p: "Le temps s'arrête littéralement autour de moi. Je peux désarmer une pièce entière, écrire une lettre, ou tuer trois hommes dans l'espace d'un battement de cil." }
+                ]
+            },
+            potence: {
+                title: "Puissance",
+                quote: "La matière est une suggestion que je refuse.",
+                intro: "La force brute n'est pas une technique, c'est une vérité. La Puissance est la capacité de détruire, de soulever, de briser. C'est la colère du sang qui se manifeste par l'impact.",
+                author: "Theo Bell, Brujah",
+                levels: [
+                    { t: "Corps Létal (1)", p: "Mes mains sont des armes de siège. Je peux arracher une gorge, briser une colonne vertébrale ou percer une cage thoracique sans le moindre effort." },
+                    { t: "Saut de Géant (1)", p: "Je compresse mes muscles et je bondis. Je franchis des immeubles, j'atterris avec la lourdeur d'une enclume." },
+                    { t: "Prouesse (2)", p: "Je sature mes muscles de Vitae. Ma force décuple instantanément pour soulever une voiture ou pulvériser un mur de briques." },
+                    { t: "Alimentation Brutale (3)", p: "Je ne bois pas, je dévore. En quelques secondes, je vide une victime de tout son sang en détruisant son corps dans le processus." },
+                    { t: "Étincelle de Rage (3)", p: "Ma force est si palpable qu'elle terrifie. Un simple craquement de jointures suffit à faire fuir les lâches." },
+                    { t: "Don de la Force (4)", p: "Je transmets ma puissance à un allié. Il ressent l'ivresse de la destruction couler dans ses veines." },
+                    { t: "Onde de Choc (5)", p: "Je frappe le sol et la terre elle-même hurle. Une onde sismique renverse tout le monde autour de moi." },
+                    { t: "Poing de Caine (5)", p: "Je n'ai même pas besoin de vous toucher. Je frappe l'air, et la pression cinétique vous brise les os à dix mètres de distance." }
+                ]
+            },
+            fortitude: {
+                title: "Résistance",
+                quote: "La douleur est une information. Je l'ignore.",
+                intro: "La Fortitude est la négation de la mort. C'est la peau qui devient marbre, l'esprit qui devient forteresse. Nous sommes les immuables, ceux qui marchent à travers le feu.",
+                author: "Gengis, Gangrel",
+                levels: [
+                    { t: "Résilience (1)", p: "Mon corps refuse de mourir. Je peux encaisser des blessures qui tueraient un éléphant et continuer à avancer." },
+                    { t: "Esprit Inébranlable (1)", p: "Ma volonté est aussi dure que ma chair. Les tentatives de coercition magique glissent sur mon esprit comme l'eau sur la pierre." },
+                    { t: "Cuirassé (2)", p: "Au moment de l'impact, ma peau devient plus dure que l'acier. Les balles s'écrasent, les lames se brisent." },
+                    { t: "Défier le Fléau (3)", p: "Je marche dans les flammes. Je lève la tête vers le soleil. Ça brûle, mais je ne tombe pas en cendres. Pas tout de suite." },
+                    { t: "Forteresse Intérieure (3)", p: "Mon esprit est un bunker. Personne ne peut lire mes pensées ou sentir mes émotions si je ne le permets pas." },
+                    { t: "Don de l'Endurance (4)", p: "Je partage mon invulnérabilité. Mon sang rend mes alliés aussi solides que des statues." },
+                    { t: "Chair de Marbre (5)", p: "Si je reste immobile, je suis physiquement indestructible. Rien ne peut me couper, me brûler ou me percer." },
+                    { t: "Prouesse de la Douleur (5)", p: "La douleur me nourrit. Plus vous me blessez, plus je deviens fort et rapide. Frappez-moi encore." }
+                ]
+            },
+            obfuscate: {
+                title: "Occultation",
+                quote: "Je suis le vide dans ta vision.",
+                intro: "L'art de l'oubli. Je ne deviens pas transparent ; je convaincs l'univers et les esprits que je ne suis pas là. Je suis le monstre sous le lit que vous refusez de voir.",
+                author: "Un Nosferatu Anonyme",
+                levels: [
+                    { t: "Manteau d'Ombres (1)", p: "Tant que je reste immobile et silencieux, je disparais. Les regards glissent sur moi sans jamais s'arrêter." },
+                    { t: "Silence de Mort (1)", p: "Je marche sur des feuilles mortes sans un craquement. Je supprime totalement le son de mon existence." },
+                    { t: "Passage Invisible (2)", p: "Je peux bouger parmi vous. Je suis une ombre dans votre vision périphérique. Vous vous écartez pour me laisser passer sans même le réaliser." },
+                    { t: "Fantôme dans la Machine (3)", p: "Mon pouvoir s'étend à la technologie. Les caméras ne me voient pas, les micros n'enregistrent que du silence. Je suis un bug." },
+                    { t: "Masque des Mille Visages (3)", p: "Je ne change pas de forme, je change votre perception. Vous voyez votre ami, votre chef, ou un inconnu banal. Je suis qui vous attendez." },
+                    { t: "Dissimulation (4)", p: "Je peux cacher un objet, une porte, ou même une maison entière. Les gens passent devant sans jamais réaliser qu'elle est là." },
+                    { t: "Disparition (4)", p: "Pouf. Je disparais instantanément, même si vous me regardiez droit dans les yeux. Le choc cognitif vous laisse confus." },
+                    { t: "Imposture (5)", p: "Je ne copie pas juste un visage, je copie une présence. Tout le monde, même vos proches, accepte instinctivement que je suis qui je prétends être." }
+                ]
+            },
+            animalism: {
+                title: "Animalisme",
+                quote: "Ils écoutent ce que tu ignores.",
+                intro: "Ce n'est pas du dressage. C'est une communion spirituelle avec la Bête qui réside en chaque créature. Je suis le Roi de la Jungle urbaine, et les rats sont mes espions.",
+                author: "Beckett, Archéologue Gangrel",
+                levels: [
+                    { t: "Lien Familier (1)", p: "Je lie un animal par mon sang. Il devient une extension de moi-même, loyal jusqu'à la mort, partageant une connexion psychique." },
+                    { t: "Sens de la Bête (1)", p: "Je sens la Bête chez les autres. Je sais si vous êtes en colère, si vous avez peur, ou si vous êtes un prédateur surnaturel." },
+                    { t: "Murmures Sauvages (2)", p: "Je parle la langue primordiale. Je peux demander aux rats ce qu'ils ont vu, ou convaincre un chien de garde de me laisser passer." },
+                    { t: "Succulence Animale (3)", p: "Le sang des bêtes me nourrit autant que celui des hommes. La nature pourvoit à mes besoins." },
+                    { t: "Apaiser la Bête (3)", p: "Je peux éteindre la rage d'un animal ou calmer la frénésie d'un vampire en touchant son âme." },
+                    { t: "Subsumer l'Esprit (4)", p: "Je laisse mon corps derrière moi et je prends le contrôle total d'un animal. Je vois par ses yeux, je chasse avec ses griffes." },
+                    { t: "Domination Animale (5)", p: "Je n'ai plus besoin de parler. Je commande mentalement à des nuées d'insectes, des meutes de loups ou des volées de corbeaux." },
+                    { t: "Extraire la Bête (5)", p: "Je transfère ma propre rage, ma peur de la mort, dans le corps d'un autre. Il devient fou de terreur à ma place." }
+                ]
+            },
+            protean: {
+                title: "Protéisme",
+                quote: "La forme est une prison. Je m'en libère.",
+                intro: "Le don primordial. Le sang se souvient du temps où nous étions des monstres sans forme. Ma chair est de l'argile, mes os sont fluides. Je suis la nature déchaînée.",
+                author: "Rudi, Chef Anarch",
+                levels: [
+                    { t: "Yeux de la Bête (1)", p: "Mes yeux brillent d'un rouge surnaturel. Les ténèbres deviennent clarté pour moi, et mon regard terrifie les mortels." },
+                    { t: "Poids de la Plume (1)", p: "Je défie la masse. Je ne laisse aucune empreinte, je ne déclenche aucun piège à pression. Je suis léger comme une ombre." },
+                    { t: "Armes Sauvages (2)", p: "Mes doigts s'allongent, mes os durcissent. Je fais pousser des griffes capables de déchirer l'acier et la chair immortelle." },
+                    { t: "Fusion Terrestre (3)", p: "Je ne creuse pas, je deviens la terre. Je m'enfonce dans le sol pour y dormir, intouchable et indétectable jusqu'au crépuscule." },
+                    { t: "Métamorphose (3)", p: "Je rejette la forme humaine. Je deviens Loup pour la vitesse et la violence, ou Chauve-souris pour le vol et le silence." },
+                    { t: "Transformation Supérieure (4)", p: "Je prends la forme d'un prédateur parfait, un ours, un grand félin, combinant puissance brute et agilité." },
+                    { t: "Forme de Brume (5)", p: "Je deviens vapeur. Les balles me traversent sans effet, je glisse sous les portes, je suis un nuage toxique et invulnérable." },
+                    { t: "Cœur de Ténèbres (5)", p: "Je peux déplacer mes organes vitaux à l'intérieur de mon corps fluide. Le pieu ne trouvera jamais mon cœur." }
+                ]
+            },
+            presence: {
+                title: "Présence",
+                quote: "Regardez-moi. N'est-ce pas ce que vous désirez ?",
+                intro: "Si la Domination est le marteau, la Présence est le poison sucré. Je manipule vos émotions. Je deviens l'objet de votre désir ou la source de votre terreur la plus primale.",
+                author: "Victoria Ash, Diva Toreador",
+                levels: [
+                    { t: "Fascination (1)", p: "Je rayonne. Quand j'entre dans une pièce, les conversations s'arrêtent. Tous les yeux sont sur moi. Je suis la personne la plus importante de votre vie à cet instant." },
+                    { t: "Regard de Terreur (1)", p: "Je laisse tomber le masque. Je révèle le monstre prédateur. Vous ne voyez pas mes crocs, mais votre cerveau reptilien hurle de fuir." },
+                    { t: "Baiser Persistant (2)", p: "Ma morsure n'est pas une agression, c'est une extase divine. Vous en redemanderez, prêt à tout pour sentir mes dents à nouveau." },
+                    { t: "Entrancement (3)", p: "Je capture votre cœur. Pendant quelques heures, vous êtes mon serviteur le plus dévoué, prêt à trahir vos amis pour un sourire de ma part." },
+                    { t: "Invocation (4)", p: "Je vous appelle à travers la nuit. Peu importe où vous êtes, vous sentez le besoin impérieux, physique, de venir à mes côtés." },
+                    { t: "Majesté (5)", p: "Je suis une déesse terrible. Il est physiquement impossible de m'attaquer ou d'être impoli en ma présence. Vous ne pouvez que vous prosterner." },
+                    { t: "Magnétisme Stellaire (5)", p: "Mon influence est permanente. Même mes ennemis les plus acharnés cherchent secrètement mon approbation et mon respect." }
+                ]
+            },
+            sorcery: {
+                title: "Sorcellerie",
+                quote: "Le sang est la monnaie de l'univers.",
+                intro: "La Thaumaturgie n'est pas un don, c'est une science volée aux dieux. Par des rituels précis et une volonté de fer, nous plions la réalité en utilisant la Vitae comme catalyseur.",
+                author: "Seigneur Schreck, Tremere",
+                levels: [
+                    { t: "Vitae Corrosive (1)", p: "Je transmute mon sang en un acide virulent. Je peux le projeter, ronger les serrures ou brûler le visage de mes ennemis." },
+                    { t: "Goût du Sang (1)", p: "Une goutte sur ma langue me dit tout : votre clan, votre génération, la puissance de votre sang et si vous avez commis le péché de diablerie." },
+                    { t: "Extinction (2)", p: "Je commande aux énergies. Je peux éteindre un incendie d'un geste, ou glacer le sang dans les veines d'un mortel pour le plonger dans le coma." },
+                    { t: "Sang de Puissance (3)", p: "Je distille ma propre essence. Je concentre mon sang pour qu'il devienne temporairement plus épais, plus puissant, augmentant mes capacités surnaturelles." },
+                    { t: "Toucher du Scorpion (3)", p: "Je transforme mon sang en un poison paralysant. Enduit sur une lame ou craché, il fige les muscles des mortels et des immortels." },
+                    { t: "Vol de Vitae (4)", p: "Je n'ai pas besoin de vous toucher. Par la force de ma volonté, j'arrache le sang de vos plaies ouvertes, le faisant voler à travers la pièce jusqu'à moi." },
+                    { t: "Chaudron de Sang (5)", p: "Le rituel de destruction ultime. Je fais bouillir votre sang à l'intérieur de votre corps. Vous brûlez de l'intérieur, explosant dans une vapeur écarlate." },
+                    { t: "Caresse de Baal (5)", p: "Je crée le poison parfait. Au contact, il détruit la chair morte des vampires comme le feu, infligeant des blessures terribles qui refusent de guérir." }
+                ]
+            },
+            oblivion: {
+                title: "Oblivion",
+                quote: "L'ombre a faim. Et je la nourris.",
+                intro: "L'Oblivion est le pouvoir du Néant, de l'entropie qui attend à la fin des temps. Nous ne créons pas l'ombre, nous l'invoquons depuis l'Abîme pour qu'elle dévore la lumière et la vie.",
+                author: "Montano, Lasombra",
+                levels: [
+                    { t: "Manteau d'Ombre (1)", p: "Les ombres m'aiment. Elles s'allongent pour me cacher, elles obscurcissent mes traits pour me rendre terrifiant. Je suis une silhouette découpée dans la réalité." },
+                    { t: "Vision de l'Oubli (1)", p: "Mes yeux s'ouvrent sur les ténèbres. Je vois parfaitement dans le noir absolu, et je perçois les spectres qui hantent les lieux de mort." },
+                    { t: "Bras d'Ahriman (2)", p: "J'appelle l'Abîme. Des tentacules d'ombre solide jaillissent des coins sombres pour saisir, écraser ou retenir mes ennemis avec une force titanesque." },
+                    { t: "Toucher de l'Ombre (3)", p: "Ma main devient froide comme la tombe. Un simple contact me permet de drainer la vitalité, la volonté et la chaleur de ma victime." },
+                    { t: "Aura de Décomposition (3)", p: "L'entropie rayonne de moi. Le métal rouille, le bois pourrit, la nourriture se gâte et les fleurs fanent en ma présence." },
+                    { t: "Linceul Stygien (4)", p: "Je vomis la nuit. Je plonge une zone entière dans une obscurité surnaturelle, épaisse et étouffante, qu'aucune lumière ne peut percer. Seul moi y vois clair." },
+                    { t: "Avatar Ténébreux (5)", p: "Je deviens l'Ombre. Mon corps perd sa consistance pour devenir une forme mouvante de ténèbres pures, invulnérable aux coups, capable de passer sous les portes." },
+                    { t: "Puits de Vide (5)", p: "Je déchire la réalité. Je crée une sphère de vide absolu qui écrase et anéantit tout ce qu'elle touche avec la pression des fonds marins." }
+                ]
+            },
+            alchemy: {
+                title: "Alchimie",
+                quote: "Nous n'avons pas de dieux. Nous avons la chimie.",
+                intro: "Le sang des Sang-Clair est trop faible pour porter la malédiction, mais assez fort pour être un catalyseur. En utilisant leur corps comme fourneau (Athanor) ou des laboratoires, ils distillent des pouvoirs uniques à partir d'émotions volées.",
+                author: "Dr. Douglas Netchurch",
+                levels: [
+                    { t: "Méthodes", p: "<span class='alchemy-method'>Fixatio :</span> Distillation lente et stable en laboratoire.<br><span class='alchemy-method'>Athanor Corporis :</span> Utiliser son propre corps comme shaker (Rapide mais coûteux).<br><span class='alchemy-method'>Calcinatio :</span> Utiliser un humain comme fourneau vivant." },
+                    { t: "Niveau 1", p: "<b>Vision Lointaine (Far Reach) :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang mélancolique + Champignons hallucinogènes.</span><br>Permet de détacher son esprit pour espionner ou manipuler des objets à distance, comme un poltergeist." },
+                    { t: "Niveau 2", p: "<b>Brouillard (Haze) :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang flegmatique + Glace sèche + Cendres.</span><br>En expirant, l'alchimiste crée un nuage opaque, froid et lourd qui étouffe les sons et la vue." },
+                    { t: "Niveau 2", p: "<b>Enveloppe (Envelop) :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang sanguin + Peau morte + Argile.</span><br>Une pâte qui permet de copier l'apparence physique d'une cible comme un masque de chair parfait." },
+                    { t: "Niveau 3", p: "<b>Momentum Aérien :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang colérique + Hélium + Plume d'oiseau.</span><br>L'alchimiste s'allège drastiquement pour faire des bonds immenses, courir sur les murs ou planer." },
+                    { t: "Niveau 4", p: "<b>Éveil du Dormeur :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang colérique fort + Adrénaline + Caféine pure.</span><br>Une drogue violente capable de sortir un vampire de la torpeur instantanément... ou de tuer un mortel par arrêt cardiaque." },
+                    { t: "Niveau 5", p: "<b>Marche-Soleil :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang de l'Aube (Rare) + Or + Sang sanguin intense.</span><br>Le Saint Graal. Permet de résister à la lumière du soleil pour une courte durée, au prix d'une douleur constante." },
+                    { t: "Niveau 5", p: "<b>Profane Hieros Gamos :</b><br><span class='alchemy-ingredients'>Ingrédients : Sang mélancolique + Mercure + Charbon.</span><br>Permet de remodeler son corps de façon permanente : changer de sexe, de visage, de voix ou d'empreintes digitales." }
+                ]
+            }
+        };
+
+        // --- MOTEUR ---
+
+        function openBook() {
+            document.getElementById('the-book').classList.add('book-open');
+            setTimeout(showIndex, 800);
+        }
+
+        function showIndex() {
+            const pageLeft = document.getElementById('page-left');
+            const pageRight = document.getElementById('page-right');
+            const returnBtn = document.getElementById('return-btn');
+
+            returnBtn.classList.add('hidden');
+
+            // Page Gauche : Titre et Dessin Occulte
+            pageLeft.innerHTML = `
+                <div class="h-full flex flex-col justify-between items-center fade-in text-center p-4">
+                    <div>
+                        <h1 class="gothic-title">SOMMAIRE</h1>
+                        <div class="w-16 h-1 bg-[#8b5e3c] mx-auto mb-4"></div>
+                        <p class="body-text text-sm italic">"La connaissance est la seule arme<br>que le temps n'émousse pas."</p>
+                    </div>
+                    
+                    <!-- SVG Gothique : Ankh + Ronces -->
+                    <div class="flex-1 w-full flex items-center justify-center">
+                        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" class="occult-drawing">
+                            <path d="M100 40 Q130 40, 130 70 Q130 100, 100 110 L100 180 M70 110 L130 110 M100 110 L100 40 Q70 40, 70 70 Q70 100, 100 110" stroke="#3e2723" stroke-width="3" fill="none"/>
+                            <path d="M20 180 Q60 120, 100 150 T180 120" stroke="#2a0a0a" stroke-width="1" fill="none"/>
+                            <path d="M180 180 Q140 120, 100 150 T20 120" stroke="#2a0a0a" stroke-width="1" fill="none"/>
+                            <path d="M40 140 L30 130 M160 140 L170 130" stroke="#2a0a0a" stroke-width="1" />
+                        </svg>
+                    </div>
+                    
+                    <div class="text-xs font-serif opacity-50 mt-4">Volume I - Sang Maudit</div>
+                </div>
+            `;
+
+            // Page Droite : Liste en grille pour éviter le scroll
+            let indexHTML = `
+                <div class="index-wrapper fade-in">
+                    <h2 class="sub-title">Disciplines Connues</h2>
+                    <div class="index-grid">
+            `;
+            
+            const keys = Object.keys(content);
+            keys.forEach(key => {
+                indexHTML += `<div class="index-item" onclick="goToDiscipline('${key}')"><span>${content[key].title}</span></div>`;
+            });
+            
+            indexHTML += `</div></div>`;
+            pageRight.innerHTML = indexHTML;
+        }
+
+        function goToDiscipline(key) {
+            const data = content[key];
+            const pageLeft = document.getElementById('page-left');
+            const pageRight = document.getElementById('page-right');
+            const returnBtn = document.getElementById('return-btn');
+
+            returnBtn.classList.remove('hidden');
+
+            // Reset pour animation
+            pageLeft.innerHTML = "";
+            pageRight.innerHTML = "";
+
+            setTimeout(() => {
+                // PAGE GAUCHE : Lore (Centré verticalement)
+                pageLeft.innerHTML = `
+                    <div class="fade-in h-full flex flex-col justify-center">
+                        <h1 class="gothic-title">${data.title}</h1>
+                        <p class="text-center italic font-serif text-lg mb-8 text-[#800000]">"${data.quote}"</p>
+                        
+                        <div class="px-4">
+                            <p class="body-text first-letter:text-4xl first-letter:font-bold first-letter:float-left first-letter:mr-2 text-[#2b2520]">
+                                ${data.intro}
+                            </p>
+                        </div>
+
+                        <div class="mt-8 pt-4 border-t border-[#8b5e3c] border-opacity-30">
+                            <p class="handwritten-note text-right">Archivé par : ${data.author}</p>
+                        </div>
+                    </div>
+                `;
+
+                // PAGE DROITE : Pouvoirs (Liste complète)
+                let powersHTML = `<div class="fade-in h-full flex flex-col"><h2 class="sub-title">Manifestations du Sang</h2><div class="flex-1 overflow-y-auto pr-2">`;
+                
+                data.levels.forEach(lvl => {
+                    powersHTML += `
+                        <div class="mb-4">
+                            <h3 class="font-bold text-[#550000] border-b border-[#8b5e3c] border-dashed mb-1 font-serif text-xs uppercase tracking-widest">${lvl.t}</h3>
+                            <p class="text-sm leading-snug text-[#1a1a1a] font-serif">${lvl.p}</p>
+                        </div>
+                    `;
+                });
+                powersHTML += `</div></div>`;
+                pageRight.innerHTML = powersHTML;
+            }, 50);
+        }
+    </script>
+</body>
+</html>
